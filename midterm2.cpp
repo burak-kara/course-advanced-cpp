@@ -17,35 +17,9 @@ struct Vector : std::vector<T>
     }
 };
 
-//template<typename First, typename Rest>
-//struct Vector<First, Rest> : std::vector<First>
-//{
-//    std::vector<First> vector;
-//    Vector(First first, Rest rest)
-//    {
-//        vector = {first, rest};
-//    }
-//};
-
-//template<typename First, typename ...Rest>
-//struct Vector<First, Rest...> : std::vector<First>
-//{
-//    std::vector<First> vector;
-//    Vector(First first, Rest... rest)
-//    {
-//        vector = {first, rest...};
-//    }
-//};
-
 // week10 app3
 template<typename First, typename ... Rest>
 Vector(First&& first, Rest&& ... rest) -> Vector<std::remove_reference_t<First>>;
-
-//template<typename First, typename Rest>
-//Vector(First, Rest) -> Vector<First, Rest>;
-
-//template<typename First, typename ...Rest>
-//Vector(First, Rest ...) -> Vector<First, Rest ...>;
 
 void vector_printer(const auto& vector)
 {
@@ -75,7 +49,7 @@ void print(const T& t)
 }
 
 template<typename First, typename ...Rest>
-void print(const First& first, const Rest&& ...rest)
+void print(const First& first, const Rest& ...rest)
 {
     if constexpr(std::is_same_v<First, Vector>)
     {
