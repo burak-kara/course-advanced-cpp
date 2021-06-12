@@ -5,6 +5,18 @@ template<typename ...> struct TD; // your compile time debug helper (TypeDisplay
 
 // WRITE YOUR CODE HERE (STARTS)
 
+constinit auto $1 = 0;
+constinit auto $2 = 0;
+constinit auto $3 = 0;
+
+using lambda_type = decltype([](auto&& a){return a;});
+auto l = lambda_type();
+auto operator*(int first, int second) {
+    auto t = TD<decltype (first)>{};
+    return 10;
+//    return [first, second](){return first* second;};
+}
+
 template<typename T>
 struct Vector : std::vector<T>
 {
@@ -21,54 +33,57 @@ struct Vector : std::vector<T>
 template<typename First, typename ... Rest>
 Vector(First&& first, Rest&& ... rest) -> Vector<std::remove_reference_t<First>>;
 
-void vector_printer(const auto& vector)
-{
-    std::cout << "Size = " << vector.size() << std::endl;
-    for(const auto& item : vector)
-    {
-        std::cout << item << " ";
-    }
-    std::cout << std::endl;
-}
+//void vector_printer(const auto& vector)
+//{
+//    std::cout << "Size = " << vector.size() << std::endl;
+//    for(const auto& item : vector)
+//    {
+//        std::cout << item << " ";
+//    }
+//    std::cout << std::endl;
+//}
 
-template<typename ...>
-void print();
+//template<typename ...>
+//void print();
 
-template<typename T>
-void print(const T& t)
-{
-    if constexpr(std::is_same_v<T, Vector>)
-    {
-        std::cout<< "vector" << std::endl;
-    }
-    else
-    {
-        std::cout<< "non-vector" << std::endl;
-    }
-//    std::cout << t << std::endl;
-}
+//template<typename T>
+//void print(const T& t)
+//{
+//    if constexpr(std::is_same_v<T, Vector>)
+//    {
+//        std::cout<< "vector" << std::endl;
+//    }
+//    else
+//    {
+//        std::cout<< "non-vector" << std::endl;
+//    }
+////    std::cout << t << std::endl;
+//}
 
-template<typename First, typename ...Rest>
-void print(const First& first, const Rest& ...rest)
-{
-    if constexpr(std::is_same_v<First, Vector>)
-    {
-        std::cout<< "vector" << std::endl;
-        vector_printer(first);
-    }
-    else
-    {
-        std::cout<< "non-vector" << std::endl;
-        std::cout << first << std::endl;
-        print(rest...);
-    }
-}
+//template<typename First, typename ...Rest>
+//void print(const First& first, const Rest& ...rest)
+//{
+////    auto d = TD<First>{};
+////    auto a = TD<Rest...>{};
+//    if constexpr(std::is_same_v<First, Vector>)
+//    {
+//        std::cout<< "vector" << std::endl;
+//        vector_printer(first);
+//    }
+//    else
+//    {
+//        std::cout<< "non-vector" << std::endl;
+//        std::cout << first << std::endl;
+//        print(rest...);
+//    }
+//}
 
 // WRITE YOUR CODE HERE (ENDS)
 int main()
 {
     // design a print overload-set or a single print function that can generically print any number of
     // containers and strings and other values in a single call to print. check the below usage of print.
+
     // design a math expression system that lazily represents an operation over values that will be later provided
     // use $1, $2, $3 as special variables of this math expression toolkit
     // $1 means the first value, $2 means the second, $3 means the third value supplied to a function/lambda
@@ -83,6 +98,7 @@ int main()
     // operator precedence is the same as the precedences that are defined in the C++ language
     // if you do compose two lambdas from left to right, there shall be no problem with the precedence
     // language will take care of it for you
+
     // create a Vector<...> class that inherits from vector<...> and extends it so that after auto v = Vector{...};
     // v[boolean expression] outputs a mask of vector<bool>
     // v[other expression] creates a new vector that contains transformed items according to the expression
@@ -94,9 +110,7 @@ int main()
 
     // Q2 (30 pts) – below and all expressions that can be written with $1, $2, $3 and +, -, *, / works correctly
 
-//    auto $1 = 5;
-//    auto $2 = 5;
-//    auto $3 = 5;
+    auto a = operator*(X{},4);
 
     auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
     print("l1(5, 10, 15)", l1(5, 10, 15));
