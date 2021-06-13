@@ -24,31 +24,21 @@ auto $3 = [](auto first, auto ...rest) {
 
 auto operator+(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
-        std::cout << "integral or floating arg1 +" << std::endl;
         if constexpr(is_numeric<decltype(arg2)>) {
-            std::cout << "integral or floating arg2 +" << std::endl;
             return [arg1, arg2](auto ...args) {
                 return arg1 + arg2;
             };
         } else {
             return [arg1, arg2](auto ...args) {
-                std::cout << arg2(args...) << std::endl;
-                std::cout << "+" << std::endl;
-                ((std::cout << args << " "), ...);
-                std::cout << std::endl;
                 return arg2(args...) + arg1;
             };
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
-        std::cout << "integral or floating arg2 +" << std::endl;
         return [arg1, arg2](auto ...args) {
             return arg1(args...) + arg2;
         };
     } else {
         return [arg1, arg2](auto ...args) {
-            std::cout << "+" << std::endl;
-            ((std::cout << args << " "), ...);
-            std::cout << std::endl;
             return arg1(args...) + arg2(args...);
         };
     }
@@ -56,31 +46,21 @@ auto operator+(auto arg1, auto arg2) {
 
 auto operator-(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
-        std::cout << "integral or floating arg1 -" << std::endl;
         if constexpr(is_numeric<decltype(arg2)>) {
-            std::cout << "integral or floating arg2 -" << std::endl;
             return [arg1, arg2](auto ...args) {
                 return arg1 - arg2;
             };
         } else {
             return [arg1, arg2](auto ...args) {
-                std::cout << arg2(args...) << std::endl;
-                std::cout << "-" << std::endl;
-                ((std::cout << args << " "), ...);
-                std::cout << std::endl;
                 return arg2(args...) - arg1;
             };
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
-        std::cout << "integral or floating arg2 -" << std::endl;
         return [arg1, arg2](auto ...args) {
             return arg1(args...) - arg2;
         };
     } else {
         return [arg1, arg2](auto ...args) {
-            std::cout << "-" << std::endl;
-            ((std::cout << args << " "), ...);
-            std::cout << std::endl;
             return arg1(args...) - arg2(args...);
         };
     }
@@ -88,31 +68,21 @@ auto operator-(auto arg1, auto arg2) {
 
 auto operator/(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
-        std::cout << "integral or floating arg1 /" << std::endl;
         if constexpr(is_numeric<decltype(arg2)>) {
-            std::cout << "integral or floating arg2 /" << std::endl;
             return [arg1, arg2](auto ...args) {
                 return arg1 / arg2;
             };
         } else {
             return [arg1, arg2](auto ...args) {
-                std::cout << arg2(args...) << std::endl;
-                std::cout << "/" << std::endl;
-                ((std::cout << args << " "), ...);
-                std::cout << std::endl;
                 return arg2(args...) / arg1;
             };
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
-        std::cout << "integral or floating arg2 /" << std::endl;
         return [arg1, arg2](auto ...args) {
             return arg1(args...) / arg2;
         };
     } else {
         return [arg1, arg2](auto ...args) {
-            std::cout << "/" << std::endl;
-            ((std::cout << args << " "), ...);
-            std::cout << std::endl;
             return arg1(args...) / arg2(args...);
         };
     }
@@ -120,31 +90,21 @@ auto operator/(auto arg1, auto arg2) {
 
 auto operator*(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
-        std::cout << "integral or floating arg1 *" << std::endl;
         if constexpr(is_numeric<decltype(arg2)>) {
-            std::cout << "integral or floating arg2 *" << std::endl;
             return [arg1, arg2](auto ...args) {
                 return arg1 * arg2;
             };
         } else {
             return [arg1, arg2](auto ...args) {
-                std::cout << arg2(args...) << std::endl;
-                std::cout << "*" << std::endl;
-                ((std::cout << args << " "), ...);
-                std::cout << std::endl;
                 return arg2(args...) * arg1;
             };
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
-        std::cout << "integral or floating arg2 *" << std::endl;
         return [arg1, arg2](auto ...args) {
             return arg1(args...) * arg2;
         };
     } else {
         return [arg1, arg2](auto ...args) {
-            std::cout << "*" << std::endl;
-            ((std::cout << args << " "), ...);
-            std::cout << std::endl;
             return arg1(args...) * arg2(args...);
         };
     }
@@ -218,10 +178,8 @@ template<typename T>
 void print(const T &t) {
     if constexpr(is_vector<T>::value) {
         vector_printer(t);
-        std::cout << std::endl;
     } else if constexpr(is_std_vector<T>::value) {
         std_vector_printer(t);
-        std::cout << std::endl;
     } else {
         std::cout << t << std::endl;
     }
@@ -231,10 +189,8 @@ template<typename First, typename ...Rest>
 void print(const First &first, const Rest &...rest) {
     if constexpr(is_vector<First>::value) {
         vector_printer(first);
-        std::cout << std::endl;
     } else if constexpr(is_std_vector<First>::value) {
         std_vector_printer(first);
-        std::cout << std::endl;
     } else {
         std::cout << first << std::endl;
     }
@@ -274,9 +230,7 @@ int main() {
 
     auto l1 = (1.1 + $3) * ($1 + $2 / 2.0); // TODO uncomment
     print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO uncomment
-//    auto l1 = (1.1 + $1) ; // TODO delete
-//    print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO delete
-    return 0;
+
     // Q3 (5 pts) - deduction guide for below line
     // you can change below line to Vector<int>{10, 20, 30} if you want to skip this question
     auto v = Vector{10, 20, 30}; // not written Vector<int>{10, 20, 30} especially.
