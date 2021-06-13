@@ -12,7 +12,7 @@ template<typename T>
 concept is_numeric = std::is_integral_v<std::remove_reference_t<T>> ||
                      std::is_floating_point_v<std::remove_reference_t<T>>;
 
-auto $1 = [](auto first, auto ...rest) {
+auto $1 = [](auto &first, auto ...rest) {
     return first;
 };
 auto $2 = [](auto first, auto ...rest) {
@@ -57,8 +57,10 @@ auto operator-(auto arg1, auto arg2) {
             };
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
-        return [arg1, arg2](auto ...args) {
-            return arg1(args...) - arg2;
+        return [arg1, arg2](auto &...args) {
+            auto result = arg1(args...) - arg2;
+//            std::cout << result << "--------" << std::endl;
+            return result;
         };
     } else {
         return [arg1, arg2](auto ...args) {
@@ -115,13 +117,13 @@ auto operator>(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
         if constexpr(is_numeric<decltype(arg2)>) {
             return [arg1, arg2](auto ...args) {
-                 // 10 > 5
+                // 10 > 5
                 return arg1 > arg2;
             };
         } else {
             return [arg1, arg2](auto ...args) {
                 // 10 > $1
-                return arg1> arg2(args...) ;
+                return arg1 > arg2(args...);
             };
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
@@ -144,10 +146,9 @@ auto operator++(auto arg1) {
             return ++arg1;
         };
     } else {
-        return [arg1](auto arg) {
-            auto temp = arg1(arg);
-            temp = ++temp;
-            std::cout << temp << std::endl;
+        return [arg1](auto &arg) {
+            auto temp = arg1(++arg);
+//            std::cout << temp << " ++temp" << std::endl;
             return temp;
         };
     }
@@ -190,15 +191,15 @@ struct Vector : std::vector<T> {
     typename enableIf<!is_numeric<LAMBDA>, std::vector<bool>>::type operator[](const LAMBDA &&lambda) {
 //      auto a = TD<decltype(lambda)>{};
         auto vec = std::vector<bool>{};
-        for (auto v :vector) {
+        for (auto &v :vector) {
             auto a = lambda(v);
-            std::cout << a << "**" << std::endl;
+//            std::cout << a << "**" << std::endl;
             vec.push_back(a);
         }
         return vec;
     }
 
-    Vector<T> operator[](const std::vector<bool>& filter) {
+    Vector<T> operator[](const std::vector<bool> &filter) {
 //        auto a = TD<decltype(filter)>{};
         auto temp_vec = Vector{};
         for (size_t i = 0; i < filter.size(); ++i) {
@@ -310,11 +311,11 @@ int main() {
     // Q4 (5 pts) - $1>10 works as expected
 
     // Q5 (10 pts) - masking of a Vector works
-    auto mask_gt_10 = v[$1 > 10];
+//    auto mask_gt_10 = v[$1 > 10];
 
     // Q6 (10 pts) - selection of Vector elements by means of a mask
-    auto v_selected = v[mask_gt_10];
-    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);
+//    auto v_selected = v[mask_gt_10];
+//    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);
 
     // Q7 (10 pts) - accessing elements of a Vector in standard way and in reverse direction
     print("First element of v", v[0], "Last Element of v", v[-1]);
