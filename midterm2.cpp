@@ -49,7 +49,6 @@ void print();
 
 template<typename T>
 void print(const T &t) {
-    std::cout << std::endl;
     if constexpr(is_vector<T>::value) {
         vector_printer(t);
     } else {
@@ -66,6 +65,7 @@ void print(const First &first, const Rest &...rest) {
         std::cout << first << std::endl;
     }
     print(rest...);
+    std::cout << std::endl;
 }
 
 // WRITE YOUR CODE HERE (ENDS)
@@ -114,15 +114,15 @@ int main() {
     // Q6 (10 pts) - selection of Vector elements by means of a mask
 //    auto v_selected = v[mask_gt_10];  // TODO uncomment
 //    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);  // TODO uncomment
-    print("v", v); // TODO delete
-    std::cout << "---" << std::endl; // TODO delete
-    print(v, "v"); // TODO delete
-    std::cout << "---" << std::endl; // TODO delete
-    print(v, v); // TODO delete
+//    print("v", v); // TODO delete
+//    std::cout << "---" << std::endl; // TODO delete
+//    print(v, "v"); // TODO delete
+//    std::cout << "---" << std::endl; // TODO delete
+//    print(v, v); // TODO delete
 
     // Q7 (10 pts) - accessing elements of a Vector in standard way and in reverse direction
 //    print("First element of v", v[0], "Last Element of v", v[-1]);  // TODO uncomment
-//    print("v", v);  // TODO uncomment
+    print("v", v);  // TODO uncomment
 
     // Q8 (only for CS409) (15 pts) - item++ operator works on Vector<int>
     // print("v applied with $1++ * 3", v[$1++ * 3]);
