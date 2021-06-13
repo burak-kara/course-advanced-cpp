@@ -1,7 +1,9 @@
 // Burak Kara S009893
 #include <iostream>
 #include <vector>
-template<typename ...> struct TD; // your compile time debug helper (TypeDisplayer)
+
+template<typename ...>
+struct TD; // your compile time debug helper (TypeDisplayer)
 
 // WRITE YOUR CODE HERE (STARTS)
 
@@ -9,29 +11,22 @@ constinit auto $1 = 0;
 constinit auto $2 = 0;
 constinit auto $3 = 0;
 
-using lambda_type = decltype([](auto&& a){return a;});
-auto l = lambda_type();
-auto operator*(int first, int second) {
-    auto t = TD<decltype (first)>{};
-    return 10;
-//    return [first, second](){return first* second;};
-}
 
 template<typename T>
-struct Vector : std::vector<T>
-{
+struct Vector : std::vector<T> {
     std::vector<T> vector;
 
     template<typename ...Ts>
-    Vector(Ts... ts)
-    {
+    Vector(Ts... ts) {
         vector = {ts...};
     }
+
+    T operator[](size_t index) { return vector[index]; }
 };
 
 // week10 app3
 template<typename First, typename ... Rest>
-Vector(First&& first, Rest&& ... rest) -> Vector<std::remove_reference_t<First>>;
+Vector(First &&first, Rest &&... rest) -> Vector<std::remove_reference_t<First>>;
 
 //void vector_printer(const auto& vector)
 //{
@@ -79,8 +74,7 @@ Vector(First&& first, Rest&& ... rest) -> Vector<std::remove_reference_t<First>>
 //}
 
 // WRITE YOUR CODE HERE (ENDS)
-int main()
-{
+int main() {
     // design a print overload-set or a single print function that can generically print any number of
     // containers and strings and other values in a single call to print. check the below usage of print.
 
@@ -110,10 +104,8 @@ int main()
 
     // Q2 (30 pts) – below and all expressions that can be written with $1, $2, $3 and +, -, *, / works correctly
 
-    auto a = operator*(X{},4);
-
-    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
-    print("l1(5, 10, 15)", l1(5, 10, 15));
+//    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
+//    print("l1(5, 10, 15)", l1(5, 10, 15));
 
     // Q3 (5 pts) - deduction guide for below line
     // you can change below line to Vector<int>{10, 20, 30} if you want to skip this question
@@ -126,11 +118,11 @@ int main()
 
     // Q6 (10 pts) - selection of Vector elements by means of a mask
     auto v_selected = v[mask_gt_10];
-    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);
+//    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);
 
     // Q7 (10 pts) - accessing elements of a Vector in standard way and in reverse direction
-    print("First element of v", v[0], "Last Element of v", v[-1]);
-    print("v", v);
+//    print("First element of v", v[0], "Last Element of v", v[-1]);
+//    print("v", v);
 
     // Q8 (only for CS409) (15 pts) - item++ operator works on Vector<int>
     // print("v applied with $1++ * 3", v[$1++ * 3]);
@@ -139,9 +131,9 @@ int main()
     // Q8 (only for CS509) (15 pts) - ++item operator works on Vector<double>
     // you can change below line to Vector<double>{1.1, 2.2, 3.3} if you don't want points from Q3
     auto v2 = Vector{1.1, 2.2, 3.3};
-    print("v2", v2);
-    print("v2 applied with ++$1 - 1", v2[++$1 - 1]);
-    print("v2", v2); // note that v's items are now incremented by one due to $1++ above
+//    print("v2", v2);
+//    print("v2 applied with ++$1 - 1", v2[++$1 - 1]);
+//    print("v2", v2); // note that v's items are now incremented by one due to $1++ above
 
     return 0;
 }
