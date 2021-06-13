@@ -33,13 +33,18 @@ struct Vector : std::vector<T> {
     }
 
     // similar to the Project 1 solution
-    T operator[](size_t index) const { return vector[index]; }
+    T operator[](const int& index) const {
+        if (index >=0)
+            return vector[index];
+        else
+            return vector[vector.size() + index];
+    }
 
     Vector<T> operator[](std::vector<bool> filter) {
         auto temp_vec = Vector{};
         for (size_t i = 0; i < filter.size(); ++i) {
             if (filter[i])
-                temp_vec.push_back(vector[i]);
+                temp_vec.vector.push_back(vector[i]);
         }
         return temp_vec;
     }
@@ -155,16 +160,10 @@ int main() {
 
     // Q6 (10 pts) - selection of Vector elements by means of a mask
     auto v_selected = v[mask_gt_10];  // TODO uncomment
-//    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);  // TODO uncomment
     print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);  // TODO uncomment
-//    print("v", v); // TODO delete
-//    std::cout << "---" << std::endl; // TODO delete
-//    print(v, "v"); // TODO delete
-//    std::cout << "---" << std::endl; // TODO delete
-//    print(v, v); // TODO delete
 
     // Q7 (10 pts) - accessing elements of a Vector in standard way and in reverse direction
-//    print("First element of v", v[0], "Last Element of v", v[-1]);  // TODO uncomment
+    print("First element of v", v[0], "Last Element of v", v[-1]);  // TODO uncomment
     print("v", v);  // TODO uncomment
 
     // Q8 (only for CS409) (15 pts) - item++ operator works on Vector<int>
