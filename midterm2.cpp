@@ -7,21 +7,43 @@ template<typename ...>
 struct TD; // your compile time debug helper (TypeDisplayer)
 
 // WRITE YOUR CODE HERE (STARTS)
-//#define $1 ${1};
-//#define $2 ${2};
-//#define $3 ${3};
 
-//#define $1 $(1);
-//#define $2 $(2);
-//#define $3 $(3);
+enum PARAM {
+    $1, $2, $3
+};
 
-//#define $1 nullptr
-//#define $2 nullptr
-//#define $3 nullptr
+auto operator+(auto arg1, auto arg2) {
+    return [arg1, arg2](auto ...args) {
+        std::cout << "+" << std::endl;
+        ((std::cout << args << " "), ...);
+        return -2;
+    };
+}
 
-#define $1 1
-#define $2 2
-#define $3 3
+auto operator-(auto arg1, auto arg2) {
+    return [arg1, arg2](auto ...args) {
+        std::cout << "-" << std::endl;
+        ((std::cout << args << " "), ...);
+        return -2;
+    };
+}
+
+auto operator/(auto arg1, auto arg2) {
+    return [arg1, arg2](auto ...args) {
+        std::cout << "/" << std::endl;
+        ((std::cout << args << " "), ...);
+        return -3;
+    };
+}
+
+auto operator*(auto arg1, auto arg2) {
+    auto a = TD<decltype(arg1)>{};
+    return [arg1, arg2](auto ...args) {
+        std::cout << "*" << std::endl;
+        ((std::cout << args << " "), ...);
+        return -4;
+    };
+}
 
 template<typename T>
 struct Vector : std::vector<T> {
@@ -33,8 +55,8 @@ struct Vector : std::vector<T> {
     }
 
     // similar to the Project 1 solution
-    T operator[](const int& index) const {
-        if (index >=0)
+    T operator[](const int &index) const {
+        if (index >= 0)
             return vector[index];
         else
             return vector[vector.size() + index];
@@ -145,8 +167,9 @@ int main() {
 
     // Q2 (30 pts) – below and all expressions that can be written with $1, $2, $3 and +, -, *, / works correctly
 
-//    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
-//    print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO uncomment
+//    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0); // TODO uncomment
+    auto l1 = (1.1 + $3) - ($1 + $2 / 2.0);
+    print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO uncomment
 
     // Q3 (5 pts) - deduction guide for below line
     // you can change below line to Vector<int>{10, 20, 30} if you want to skip this question
