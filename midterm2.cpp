@@ -115,23 +115,52 @@ auto operator>(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
         if constexpr(is_numeric<decltype(arg2)>) {
             return [arg1, arg2](auto ...args) {
+                 // 10 > 5
                 return arg1 > arg2;
             };
         } else {
             return [arg1, arg2](auto ...args) {
-                return arg2(args...) > arg1;
+                // 10 > $1
+                return arg1> arg2(args...) ;
             };
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
         return [arg1, arg2](auto ...args) {
+            // $1 > 5
             return arg1(args...) > arg2;
         };
     } else {
         return [arg1, arg2](auto ...args) {
+            // $1 > $2
             return arg1(args...) > arg2(args...);
         };
     }
 }
+
+auto operator++(auto arg1) {
+    // actually arg1 is always lambda
+    if constexpr(is_numeric<decltype(arg1)>) {
+        return [arg1](auto ...args) {
+            return ++arg1;
+        };
+    } else {
+        return [arg1](auto arg) {
+            auto temp = arg1(arg);
+            temp = ++temp;
+            std::cout << temp << std::endl;
+            return temp;
+        };
+    }
+}
+
+// week12 app2
+template<bool, typename T>
+struct enableIf {
+};
+template<typename T>
+struct enableIf<true, T> {
+    using type = T;
+};
 
 template<typename T>
 struct Vector : std::vector<T> {
@@ -150,22 +179,27 @@ struct Vector : std::vector<T> {
             return vector[vector.size() + index];
     }
 
-    auto operator[](auto &&index) const {
-        if constexpr(is_numeric<decltype(index)>) {
-            if (index >= 0)
-                return vector[index];
-            else
-                return vector[vector.size() + index];
-        } else {
-            auto vec = std::vector<bool>{};
-            for (auto v :vector) {
-                vec.push_back(index(v));
-            }
-            return vec;
-        }
+    T operator[](int &&index) {
+        if (index >= 0)
+            return vector[index];
+        else
+            return vector[vector.size() + index];
     }
 
-    Vector<T> operator[](std::vector<bool> filter) {
+    template<typename LAMBDA>
+    typename enableIf<!is_numeric<LAMBDA>, std::vector<bool>>::type operator[](const LAMBDA &&lambda) {
+//      auto a = TD<decltype(lambda)>{};
+        auto vec = std::vector<bool>{};
+        for (auto v :vector) {
+            auto a = lambda(v);
+            std::cout << a << "**" << std::endl;
+            vec.push_back(a);
+        }
+        return vec;
+    }
+
+    Vector<T> operator[](const std::vector<bool>& filter) {
+//        auto a = TD<decltype(filter)>{};
         auto temp_vec = Vector{};
         for (size_t i = 0; i < filter.size(); ++i) {
             if (filter[i])
@@ -174,7 +208,7 @@ struct Vector : std::vector<T> {
         return temp_vec;
     }
 
-    size_t getSize() const { return vector.size(); }
+    [[nodiscard]] size_t getSize() const { return vector.size(); }
 };
 
 // week10 app3
