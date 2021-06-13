@@ -8,61 +8,146 @@ struct TD; // your compile time debug helper (TypeDisplayer)
 
 // WRITE YOUR CODE HERE (STARTS)
 
-//// week12 app5
-//template<typename LIST>
-//auto get_nth(size_t nth, LIST ...list) {
-//    const auto reducer = [nth](size_t index, LIST first, LIST ... rest) {
-//        if (index == nth) {
-//            return first;
-//        } else {
-//            return access_first_element(++index, rest...);
-//        }
-//    };
-//
-//    return reducer(nth);
-//}
+template<typename T>
+concept is_numeric = std::is_integral_v<std::remove_reference_t<T>> ||
+                     std::is_floating_point_v<std::remove_reference_t<T>>;
 
-enum PARAM {
-    $1, $2, $3
+auto $1 = [](auto first, auto ...rest) {
+    return first;
+};
+auto $2 = [](auto first, auto ...rest) {
+    return $1(rest...);
+};
+auto $3 = [](auto first, auto ...rest) {
+    return $2(rest...);
 };
 
 auto operator+(auto arg1, auto arg2) {
-//    std::cout << arg2 << std::endl;
-    auto a = arg2;
-    return [arg1, arg2](auto ...args) {
-        std::cout << "+" << std::endl;
-        ((std::cout << args << " "), ...);
-        std::cout << std::endl;
-        return (args+...);
-    };
+    if constexpr(is_numeric<decltype(arg1)>) {
+        std::cout << "integral or floating arg1 +" << std::endl;
+        if constexpr(is_numeric<decltype(arg2)>) {
+            std::cout << "integral or floating arg2 +" << std::endl;
+            return [arg1, arg2](auto ...args) {
+                return arg1 + arg2;
+            };
+        } else {
+            return [arg1, arg2](auto ...args) {
+                std::cout << arg2(args...) << std::endl;
+                std::cout << "+" << std::endl;
+                ((std::cout << args << " "), ...);
+                std::cout << std::endl;
+                return arg2(args...) + arg1;
+            };
+        }
+    } else if constexpr(is_numeric<decltype(arg2)>) {
+        std::cout << "integral or floating arg2 +" << std::endl;
+        return [arg1, arg2](auto ...args) {
+            return arg1(args...) + arg2;
+        };
+    } else {
+        return [arg1, arg2](auto ...args) {
+            std::cout << "+" << std::endl;
+            ((std::cout << args << " "), ...);
+            std::cout << std::endl;
+            return arg1(args...) + arg2(args...);
+        };
+    }
 }
 
 auto operator-(auto arg1, auto arg2) {
-    return [arg1, arg2](auto ...args) {
-        std::cout << "-" << std::endl;
-        ((std::cout << args << " "), ...);
-        std::cout << std::endl;
-        return (args-...);
-    };
+    if constexpr(is_numeric<decltype(arg1)>) {
+        std::cout << "integral or floating arg1 -" << std::endl;
+        if constexpr(is_numeric<decltype(arg2)>) {
+            std::cout << "integral or floating arg2 -" << std::endl;
+            return [arg1, arg2](auto ...args) {
+                return arg1 - arg2;
+            };
+        } else {
+            return [arg1, arg2](auto ...args) {
+                std::cout << arg2(args...) << std::endl;
+                std::cout << "-" << std::endl;
+                ((std::cout << args << " "), ...);
+                std::cout << std::endl;
+                return arg2(args...) - arg1;
+            };
+        }
+    } else if constexpr(is_numeric<decltype(arg2)>) {
+        std::cout << "integral or floating arg2 -" << std::endl;
+        return [arg1, arg2](auto ...args) {
+            return arg1(args...) - arg2;
+        };
+    } else {
+        return [arg1, arg2](auto ...args) {
+            std::cout << "-" << std::endl;
+            ((std::cout << args << " "), ...);
+            std::cout << std::endl;
+            return arg1(args...) - arg2(args...);
+        };
+    }
 }
 
 auto operator/(auto arg1, auto arg2) {
-    return [arg1, arg2](auto ...args) {
-        std::cout << "/" << std::endl;
-        ((std::cout << args << " "), ...);
-        std::cout << std::endl;
-        return (args/...);
-    };
+    if constexpr(is_numeric<decltype(arg1)>) {
+        std::cout << "integral or floating arg1 /" << std::endl;
+        if constexpr(is_numeric<decltype(arg2)>) {
+            std::cout << "integral or floating arg2 /" << std::endl;
+            return [arg1, arg2](auto ...args) {
+                return arg1 / arg2;
+            };
+        } else {
+            return [arg1, arg2](auto ...args) {
+                std::cout << arg2(args...) << std::endl;
+                std::cout << "/" << std::endl;
+                ((std::cout << args << " "), ...);
+                std::cout << std::endl;
+                return arg2(args...) / arg1;
+            };
+        }
+    } else if constexpr(is_numeric<decltype(arg2)>) {
+        std::cout << "integral or floating arg2 /" << std::endl;
+        return [arg1, arg2](auto ...args) {
+            return arg1(args...) / arg2;
+        };
+    } else {
+        return [arg1, arg2](auto ...args) {
+            std::cout << "/" << std::endl;
+            ((std::cout << args << " "), ...);
+            std::cout << std::endl;
+            return arg1(args...) / arg2(args...);
+        };
+    }
 }
 
 auto operator*(auto arg1, auto arg2) {
-//    auto a = TD<decltype(arg1)>{};
-    return [arg1, arg2](auto ...args) {
-        std::cout << "*" << std::endl;
-        ((std::cout << args << " "), ...);
-        std::cout << std::endl;
-        return (args*...);
-    };
+    if constexpr(is_numeric<decltype(arg1)>) {
+        std::cout << "integral or floating arg1 *" << std::endl;
+        if constexpr(is_numeric<decltype(arg2)>) {
+            std::cout << "integral or floating arg2 *" << std::endl;
+            return [arg1, arg2](auto ...args) {
+                return arg1 * arg2;
+            };
+        } else {
+            return [arg1, arg2](auto ...args) {
+                std::cout << arg2(args...) << std::endl;
+                std::cout << "*" << std::endl;
+                ((std::cout << args << " "), ...);
+                std::cout << std::endl;
+                return arg2(args...) * arg1;
+            };
+        }
+    } else if constexpr(is_numeric<decltype(arg2)>) {
+        std::cout << "integral or floating arg2 *" << std::endl;
+        return [arg1, arg2](auto ...args) {
+            return arg1(args...) * arg2;
+        };
+    } else {
+        return [arg1, arg2](auto ...args) {
+            std::cout << "*" << std::endl;
+            ((std::cout << args << " "), ...);
+            std::cout << std::endl;
+            return arg1(args...) * arg2(args...);
+        };
+    }
 }
 
 template<typename T>
@@ -187,10 +272,11 @@ int main() {
 
     // Q2 (30 pts) – below and all expressions that can be written with $1, $2, $3 and +, -, *, / works correctly
 
-//    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0); // TODO uncomment
-    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
+    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0); // TODO uncomment
     print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO uncomment
-
+//    auto l1 = (1.1 + $1) ; // TODO delete
+//    print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO delete
+    return 0;
     // Q3 (5 pts) - deduction guide for below line
     // you can change below line to Vector<int>{10, 20, 30} if you want to skip this question
     auto v = Vector{10, 20, 30}; // not written Vector<int>{10, 20, 30} especially.
