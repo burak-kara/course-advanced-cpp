@@ -8,15 +8,32 @@ struct TD; // your compile time debug helper (TypeDisplayer)
 
 // WRITE YOUR CODE HERE (STARTS)
 
+//// week12 app5
+//template<typename LIST>
+//auto get_nth(size_t nth, LIST ...list) {
+//    const auto reducer = [nth](size_t index, LIST first, LIST ... rest) {
+//        if (index == nth) {
+//            return first;
+//        } else {
+//            return access_first_element(++index, rest...);
+//        }
+//    };
+//
+//    return reducer(nth);
+//}
+
 enum PARAM {
     $1, $2, $3
 };
 
 auto operator+(auto arg1, auto arg2) {
+//    std::cout << arg2 << std::endl;
+    auto a = arg2;
     return [arg1, arg2](auto ...args) {
         std::cout << "+" << std::endl;
         ((std::cout << args << " "), ...);
-        return -2;
+        std::cout << std::endl;
+        return (args+...);
     };
 }
 
@@ -24,7 +41,8 @@ auto operator-(auto arg1, auto arg2) {
     return [arg1, arg2](auto ...args) {
         std::cout << "-" << std::endl;
         ((std::cout << args << " "), ...);
-        return -2;
+        std::cout << std::endl;
+        return (args-...);
     };
 }
 
@@ -32,16 +50,18 @@ auto operator/(auto arg1, auto arg2) {
     return [arg1, arg2](auto ...args) {
         std::cout << "/" << std::endl;
         ((std::cout << args << " "), ...);
-        return -3;
+        std::cout << std::endl;
+        return (args/...);
     };
 }
 
 auto operator*(auto arg1, auto arg2) {
-    auto a = TD<decltype(arg1)>{};
+//    auto a = TD<decltype(arg1)>{};
     return [arg1, arg2](auto ...args) {
         std::cout << "*" << std::endl;
         ((std::cout << args << " "), ...);
-        return -4;
+        std::cout << std::endl;
+        return (args*...);
     };
 }
 
@@ -168,7 +188,7 @@ int main() {
     // Q2 (30 pts) – below and all expressions that can be written with $1, $2, $3 and +, -, *, / works correctly
 
 //    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0); // TODO uncomment
-    auto l1 = (1.1 + $3) - ($1 + $2 / 2.0);
+    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
     print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO uncomment
 
     // Q3 (5 pts) - deduction guide for below line
