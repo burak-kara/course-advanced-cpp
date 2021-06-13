@@ -35,7 +35,6 @@ void vector_printer(const auto &vector) {
     for (auto i = 0; i < vector.getSize(); i++) {
         std::cout << vector[i] << " ";
     }
-    std::cout << std::endl;
 }
 
 template<typename T>
@@ -50,6 +49,7 @@ void print();
 
 template<typename T>
 void print(const T &t) {
+    std::cout << std::endl;
     if constexpr(is_vector<T>::value) {
         vector_printer(t);
     } else {
@@ -62,11 +62,10 @@ void print(const First &first, const Rest &...rest) {
     std::cout << std::endl;
     if constexpr(is_vector<First>::value) {
         vector_printer(first);
-        print(rest...);
     } else {
         std::cout << first << std::endl;
-        print(rest...);
     }
+    print(rest...);
 }
 
 // WRITE YOUR CODE HERE (ENDS)
