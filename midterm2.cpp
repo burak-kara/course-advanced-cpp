@@ -38,28 +38,32 @@ void vector_printer(const auto &vector) {
     std::cout << std::endl;
 }
 
+template<typename T>
+struct is_vector : std::false_type {
+};
+template<typename T>
+struct is_vector<Vector<T>> : std::true_type {
+};
+
 template<typename ...>
 void print();
 
 template<typename T>
 void print(const T &t) {
-    if constexpr(std::is_same_v<T, Vector<int>>) { // TODO fix to make generic not only int
-//        std::cout << "vector-2" << std::endl;
+    if constexpr(is_vector<T>::value) {
         vector_printer(t);
     } else {
-//        std::cout << "non vector-2" << std::endl;
         std::cout << t << std::endl;
     }
 }
 
 template<typename First, typename ...Rest>
 void print(const First &first, const Rest &...rest) {
-    if constexpr(std::is_same_v<First, Vector<int>>) { // TODO fix to make generic not only int
-//        std::cout << "vector-1" << std::endl;
+    std::cout << std::endl;
+    if constexpr(is_vector<First>::value) {
         vector_printer(first);
         print(rest...);
     } else {
-//        std::cout << "non vector-1" << std::endl;
         std::cout << first << std::endl;
         print(rest...);
     }
@@ -112,9 +116,9 @@ int main() {
 //    auto v_selected = v[mask_gt_10];  // TODO uncomment
 //    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);  // TODO uncomment
     print("v", v); // TODO delete
-    std::cout  << "---" << std::endl;
+    std::cout << "---" << std::endl; // TODO delete
     print(v, "v"); // TODO delete
-    std::cout  << "---" << std::endl;
+    std::cout << "---" << std::endl; // TODO delete
     print(v, v); // TODO delete
 
     // Q7 (10 pts) - accessing elements of a Vector in standard way and in reverse direction
@@ -128,7 +132,7 @@ int main() {
     // Q8 (only for CS509) (15 pts) - ++item operator works on Vector<double>
     // you can change below line to Vector<double>{1.1, 2.2, 3.3} if you don't want points from Q3
     auto v2 = Vector{1.1, 2.2, 3.3};
-//    print("v2", v2);  // TODO uncomment
+    print("v2", v2);  // TODO uncomment
 //    print("v2 applied with ++$1 - 1", v2[++$1 - 1]);  // TODO uncomment
 //    print("v2", v2); // note that v's items are now incremented by one due to $1++ above  // TODO uncomment
 
