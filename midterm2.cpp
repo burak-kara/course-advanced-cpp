@@ -21,57 +21,49 @@ struct Vector : std::vector<T> {
         vector = {ts...};
     }
 
-    T operator[](size_t index) { return vector[index]; }
+    // similar to the Project 1 solution
+    T operator[](size_t index) const { return vector[index]; }
+
+    size_t getSize() const { return vector.size(); }
 };
 
 // week10 app3
 template<typename First, typename ... Rest>
 Vector(First &&first, Rest &&... rest) -> Vector<std::remove_reference_t<First>>;
 
-//void vector_printer(const auto& vector)
-//{
-//    std::cout << "Size = " << vector.size() << std::endl;
-//    for(const auto& item : vector)
-//    {
-//        std::cout << item << " ";
-//    }
-//    std::cout << std::endl;
-//}
+void vector_printer(const auto &vector) {
+    for (auto i = 0; i < vector.getSize(); i++) {
+        std::cout << vector[i] << " ";
+    }
+    std::cout << std::endl;
+}
 
-//template<typename ...>
-//void print();
+template<typename ...>
+void print();
 
-//template<typename T>
-//void print(const T& t)
-//{
-//    if constexpr(std::is_same_v<T, Vector>)
-//    {
-//        std::cout<< "vector" << std::endl;
-//    }
-//    else
-//    {
-//        std::cout<< "non-vector" << std::endl;
-//    }
-////    std::cout << t << std::endl;
-//}
+template<typename T>
+void print(const T &t) {
+    if constexpr(std::is_same_v<T, Vector<int>>) { // TODO fix to make generic not only int
+//        std::cout << "vector-2" << std::endl;
+        vector_printer(t);
+    } else {
+//        std::cout << "non vector-2" << std::endl;
+        std::cout << t << std::endl;
+    }
+}
 
-//template<typename First, typename ...Rest>
-//void print(const First& first, const Rest& ...rest)
-//{
-////    auto d = TD<First>{};
-////    auto a = TD<Rest...>{};
-//    if constexpr(std::is_same_v<First, Vector>)
-//    {
-//        std::cout<< "vector" << std::endl;
-//        vector_printer(first);
-//    }
-//    else
-//    {
-//        std::cout<< "non-vector" << std::endl;
-//        std::cout << first << std::endl;
-//        print(rest...);
-//    }
-//}
+template<typename First, typename ...Rest>
+void print(const First &first, const Rest &...rest) {
+    if constexpr(std::is_same_v<First, Vector<int>>) { // TODO fix to make generic not only int
+//        std::cout << "vector-1" << std::endl;
+        vector_printer(first);
+        print(rest...);
+    } else {
+//        std::cout << "non vector-1" << std::endl;
+        std::cout << first << std::endl;
+        print(rest...);
+    }
+}
 
 // WRITE YOUR CODE HERE (ENDS)
 int main() {
@@ -104,8 +96,8 @@ int main() {
 
     // Q2 (30 pts) – below and all expressions that can be written with $1, $2, $3 and +, -, *, / works correctly
 
-//    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
-//    print("l1(5, 10, 15)", l1(5, 10, 15));
+    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
+//    print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO uncomment
 
     // Q3 (5 pts) - deduction guide for below line
     // you can change below line to Vector<int>{10, 20, 30} if you want to skip this question
@@ -117,12 +109,17 @@ int main() {
     auto mask_gt_10 = v[$1 > 10];
 
     // Q6 (10 pts) - selection of Vector elements by means of a mask
-    auto v_selected = v[mask_gt_10];
-//    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);
+//    auto v_selected = v[mask_gt_10];  // TODO uncomment
+//    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);  // TODO uncomment
+    print("v", v); // TODO delete
+    std::cout  << "---" << std::endl;
+    print(v, "v"); // TODO delete
+    std::cout  << "---" << std::endl;
+    print(v, v); // TODO delete
 
     // Q7 (10 pts) - accessing elements of a Vector in standard way and in reverse direction
-//    print("First element of v", v[0], "Last Element of v", v[-1]);
-//    print("v", v);
+//    print("First element of v", v[0], "Last Element of v", v[-1]);  // TODO uncomment
+//    print("v", v);  // TODO uncomment
 
     // Q8 (only for CS409) (15 pts) - item++ operator works on Vector<int>
     // print("v applied with $1++ * 3", v[$1++ * 3]);
@@ -131,9 +128,9 @@ int main() {
     // Q8 (only for CS509) (15 pts) - ++item operator works on Vector<double>
     // you can change below line to Vector<double>{1.1, 2.2, 3.3} if you don't want points from Q3
     auto v2 = Vector{1.1, 2.2, 3.3};
-//    print("v2", v2);
-//    print("v2 applied with ++$1 - 1", v2[++$1 - 1]);
-//    print("v2", v2); // note that v's items are now incremented by one due to $1++ above
+//    print("v2", v2);  // TODO uncomment
+//    print("v2 applied with ++$1 - 1", v2[++$1 - 1]);  // TODO uncomment
+//    print("v2", v2); // note that v's items are now incremented by one due to $1++ above  // TODO uncomment
 
     return 0;
 }
