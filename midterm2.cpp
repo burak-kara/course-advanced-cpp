@@ -22,6 +22,7 @@ auto $3 = [](auto first, auto ...rest) {
     return $2(rest...);
 };
 
+// definitely the best solution... lots of code repetition......
 auto operator+(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
         if constexpr(is_numeric<decltype(arg2)>) {
@@ -110,6 +111,28 @@ auto operator*(auto arg1, auto arg2) {
     }
 }
 
+auto operator>(auto arg1, auto arg2) {
+    if constexpr(is_numeric<decltype(arg1)>) {
+        if constexpr(is_numeric<decltype(arg2)>) {
+            return [arg1, arg2](auto ...args) {
+                return arg1 > arg2;
+            };
+        } else {
+            return [arg1, arg2](auto ...args) {
+                return arg2(args...) > arg1;
+            };
+        }
+    } else if constexpr(is_numeric<decltype(arg2)>) {
+        return [arg1, arg2](auto ...args) {
+            return arg1(args...) > arg2;
+        };
+    } else {
+        return [arg1, arg2](auto ...args) {
+            return arg1(args...) > arg2(args...);
+        };
+    }
+}
+
 template<typename T>
 struct Vector : std::vector<T> {
     std::vector<T> vector;
@@ -125,6 +148,21 @@ struct Vector : std::vector<T> {
             return vector[index];
         else
             return vector[vector.size() + index];
+    }
+
+    auto operator[](auto &&index) const {
+        if constexpr(is_numeric<decltype(index)>) {
+            if (index >= 0)
+                return vector[index];
+            else
+                return vector[vector.size() + index];
+        } else {
+            auto vec = std::vector<bool>{};
+            for (auto v :vector) {
+                vec.push_back(index(v));
+            }
+            return vec;
+        }
     }
 
     Vector<T> operator[](std::vector<bool> filter) {
@@ -228,8 +266,8 @@ int main() {
 
     // Q2 (30 pts) – below and all expressions that can be written with $1, $2, $3 and +, -, *, / works correctly
 
-    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0); // TODO uncomment
-    print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO uncomment
+    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
+    print("l1(5, 10, 15)", l1(5, 10, 15));
 
     // Q3 (5 pts) - deduction guide for below line
     // you can change below line to Vector<int>{10, 20, 30} if you want to skip this question
@@ -238,16 +276,15 @@ int main() {
     // Q4 (5 pts) - $1>10 works as expected
 
     // Q5 (10 pts) - masking of a Vector works
-//    auto mask_gt_10 = v[$1 > 10]; // TODO uncomment
-    auto mask_gt_10 = std::vector<bool>{false, true, true}; // TODO delete
+    auto mask_gt_10 = v[$1 > 10];
 
     // Q6 (10 pts) - selection of Vector elements by means of a mask
-    auto v_selected = v[mask_gt_10];  // TODO uncomment
-    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);  // TODO uncomment
+    auto v_selected = v[mask_gt_10];
+    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);
 
     // Q7 (10 pts) - accessing elements of a Vector in standard way and in reverse direction
-    print("First element of v", v[0], "Last Element of v", v[-1]);  // TODO uncomment
-    print("v", v);  // TODO uncomment
+    print("First element of v", v[0], "Last Element of v", v[-1]);
+    print("v", v);
 
     // Q8 (only for CS409) (15 pts) - item++ operator works on Vector<int>
     // print("v applied with $1++ * 3", v[$1++ * 3]);
@@ -256,9 +293,8 @@ int main() {
     // Q8 (only for CS509) (15 pts) - ++item operator works on Vector<double>
     // you can change below line to Vector<double>{1.1, 2.2, 3.3} if you don't want points from Q3
     auto v2 = Vector{1.1, 2.2, 3.3};
-    print("v2", v2);  // TODO uncomment
-//    print("v2 applied with ++$1 - 1", v2[++$1 - 1]);  // TODO uncomment
-//    print("v2", v2); // note that v's items are now incremented by one due to $1++ above  // TODO uncomment
-
+    print("v2", v2);
+    print("v2 applied with ++$1 - 1", v2[++$1 - 1]);
+    print("v2", v2); // note that v's items are now incremented by one due to $1++ above
     return 0;
 }
