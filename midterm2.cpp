@@ -2,15 +2,26 @@
 #include <iostream>
 #include <vector>
 
+
 template<typename ...>
 struct TD; // your compile time debug helper (TypeDisplayer)
 
 // WRITE YOUR CODE HERE (STARTS)
+//#define $1 ${1};
+//#define $2 ${2};
+//#define $3 ${3};
 
-constinit auto $1 = 0;
-constinit auto $2 = 0;
-constinit auto $3 = 0;
+//#define $1 $(1);
+//#define $2 $(2);
+//#define $3 $(3);
 
+//#define $1 nullptr
+//#define $2 nullptr
+//#define $3 nullptr
+
+#define $1 1
+#define $2 2
+#define $3 3
 
 template<typename T>
 struct Vector : std::vector<T> {
@@ -24,18 +35,21 @@ struct Vector : std::vector<T> {
     // similar to the Project 1 solution
     T operator[](size_t index) const { return vector[index]; }
 
+    Vector<T> operator[](std::vector<bool> filter) {
+        auto temp_vec = Vector{};
+        for (size_t i = 0; i < filter.size(); ++i) {
+            if (filter[i])
+                temp_vec.push_back(vector[i]);
+        }
+        return temp_vec;
+    }
+
     size_t getSize() const { return vector.size(); }
 };
 
 // week10 app3
 template<typename First, typename ... Rest>
 Vector(First &&first, Rest &&... rest) -> Vector<std::remove_reference_t<First>>;
-
-void vector_printer(const auto &vector) {
-    for (auto i = 0; i < vector.getSize(); i++) {
-        std::cout << vector[i] << " ";
-    }
-}
 
 template<typename T>
 struct is_vector : std::false_type {
@@ -44,6 +58,27 @@ template<typename T>
 struct is_vector<Vector<T>> : std::true_type {
 };
 
+template<typename T>
+struct is_std_vector : std::false_type {
+};
+template<typename T>
+struct is_std_vector<std::vector<T>> : std::true_type {
+};
+
+void std_vector_printer(const auto &vector) {
+    for (auto i = 0; i < vector.size(); i++) {
+        std::cout << vector[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+void vector_printer(const auto &vector) {
+    for (auto i = 0; i < vector.getSize(); i++) {
+        std::cout << vector[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
 template<typename ...>
 void print();
 
@@ -51,6 +86,10 @@ template<typename T>
 void print(const T &t) {
     if constexpr(is_vector<T>::value) {
         vector_printer(t);
+        std::cout << std::endl;
+    } else if constexpr(is_std_vector<T>::value) {
+        std_vector_printer(t);
+        std::cout << std::endl;
     } else {
         std::cout << t << std::endl;
     }
@@ -58,14 +97,16 @@ void print(const T &t) {
 
 template<typename First, typename ...Rest>
 void print(const First &first, const Rest &...rest) {
-    std::cout << std::endl;
     if constexpr(is_vector<First>::value) {
         vector_printer(first);
+        std::cout << std::endl;
+    } else if constexpr(is_std_vector<First>::value) {
+        std_vector_printer(first);
+        std::cout << std::endl;
     } else {
         std::cout << first << std::endl;
     }
     print(rest...);
-    std::cout << std::endl;
 }
 
 // WRITE YOUR CODE HERE (ENDS)
@@ -99,7 +140,7 @@ int main() {
 
     // Q2 (30 pts) – below and all expressions that can be written with $1, $2, $3 and +, -, *, / works correctly
 
-    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
+//    auto l1 = (1.1 + $3) * ($1 + $2 / 2.0);
 //    print("l1(5, 10, 15)", l1(5, 10, 15));  // TODO uncomment
 
     // Q3 (5 pts) - deduction guide for below line
@@ -109,11 +150,13 @@ int main() {
     // Q4 (5 pts) - $1>10 works as expected
 
     // Q5 (10 pts) - masking of a Vector works
-    auto mask_gt_10 = v[$1 > 10];
+//    auto mask_gt_10 = v[$1 > 10]; // TODO uncomment
+    auto mask_gt_10 = std::vector<bool>{false, true, true}; // TODO delete
 
     // Q6 (10 pts) - selection of Vector elements by means of a mask
-//    auto v_selected = v[mask_gt_10];  // TODO uncomment
+    auto v_selected = v[mask_gt_10];  // TODO uncomment
 //    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);  // TODO uncomment
+    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);  // TODO uncomment
 //    print("v", v); // TODO delete
 //    std::cout << "---" << std::endl; // TODO delete
 //    print(v, "v"); // TODO delete
