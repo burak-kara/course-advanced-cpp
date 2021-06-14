@@ -58,9 +58,7 @@ auto operator-(auto arg1, auto arg2) {
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
         return [arg1, arg2](auto &...args) {
-            auto result = arg1(args...) - arg2;
-//            std::cout << result << "--------" << std::endl;
-            return result;
+            return arg1(args...) - arg2;
         };
     } else {
         return [arg1, arg2](auto ...args) {
@@ -117,23 +115,19 @@ auto operator>(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
         if constexpr(is_numeric<decltype(arg2)>) {
             return [arg1, arg2](auto ...args) {
-                // 10 > 5
                 return arg1 > arg2;
             };
         } else {
             return [arg1, arg2](auto ...args) {
-                // 10 > $1
                 return arg1 > arg2(args...);
             };
         }
     } else if constexpr(is_numeric<decltype(arg2)>) {
         return [arg1, arg2](auto ...args) {
-            // $1 > 5
             return arg1(args...) > arg2;
         };
     } else {
         return [arg1, arg2](auto ...args) {
-            // $1 > $2
             return arg1(args...) > arg2(args...);
         };
     }
@@ -147,9 +141,7 @@ auto operator++(auto arg1) {
         };
     } else {
         return [arg1](auto &arg) {
-            auto temp = arg1(++arg);
-//            std::cout << temp << " ++temp" << std::endl;
-            return temp;
+            return arg1(++arg);
         };
     }
 }
@@ -168,39 +160,34 @@ struct Vector : std::vector<T> {
     std::vector<T> vector;
 
     template<typename ...Ts>
-    Vector(Ts... ts) {
+    explicit Vector(Ts... ts) {
         vector = {ts...};
     }
 
-    // similar to the Project 1 solution
-    T operator[](const int &index) const {
-        if (index >= 0)
-            return vector[index];
-        else
-            return vector[vector.size() + index];
+    // index operations
+    T operator[](is_numeric auto &&index) {
+        return vector[index >= 0 ? index : vector.size() + index];
     }
 
-    T operator[](int &&index) {
-        if (index >= 0)
-            return vector[index];
-        else
-            return vector[vector.size() + index];
-    }
-
-    template<typename LAMBDA>
-    typename enableIf<!is_numeric<LAMBDA>, std::vector<bool>>::type operator[](const LAMBDA &&lambda) {
-//      auto a = TD<decltype(lambda)>{};
+    // bool expressions
+    std::vector<bool> operator[](const auto &&lambda) {
         auto vec = std::vector<bool>{};
         for (auto &v :vector) {
             auto a = lambda(v);
-//            std::cout << a << "**" << std::endl;
+//            auto td = TD<decltype(a)>{};
             vec.push_back(a);
         }
         return vec;
     }
 
+    // for other expressions
+//    auto operator[](const auto &&lambda) {
+//        for (auto &v :vector)
+//            lambda(v);
+//        return vector;
+//    }
+
     Vector<T> operator[](const std::vector<bool> &filter) {
-//        auto a = TD<decltype(filter)>{};
         auto temp_vec = Vector{};
         for (size_t i = 0; i < filter.size(); ++i) {
             if (filter[i])
@@ -237,7 +224,7 @@ void std_vector_printer(const auto &vector) {
     std::cout << std::endl;
 }
 
-void vector_printer(const auto &vector) {
+void vector_printer(auto &vector) {
     for (auto i = 0; i < vector.getSize(); i++) {
         std::cout << vector[i] << " ";
     }
@@ -248,10 +235,10 @@ template<typename ...>
 void print();
 
 template<typename T>
-void print(const T &t) {
-    if constexpr(is_vector<T>::value) {
+void print(T &&t) {
+    if constexpr(is_vector<std::remove_reference_t<T>>::value) {
         vector_printer(t);
-    } else if constexpr(is_std_vector<T>::value) {
+    } else if constexpr(is_std_vector<std::remove_reference_t<T>>::value) {
         std_vector_printer(t);
     } else {
         std::cout << t << std::endl;
@@ -259,10 +246,10 @@ void print(const T &t) {
 }
 
 template<typename First, typename ...Rest>
-void print(const First &first, const Rest &...rest) {
-    if constexpr(is_vector<First>::value) {
+void print(First &&first, Rest &&...rest) {
+    if constexpr(is_vector<std::remove_reference_t<First>>::value) {
         vector_printer(first);
-    } else if constexpr(is_std_vector<First>::value) {
+    } else if constexpr(is_std_vector<std::remove_reference_t<First>>::value) {
         std_vector_printer(first);
     } else {
         std::cout << first << std::endl;
@@ -311,11 +298,11 @@ int main() {
     // Q4 (5 pts) - $1>10 works as expected
 
     // Q5 (10 pts) - masking of a Vector works
-//    auto mask_gt_10 = v[$1 > 10];
+    auto mask_gt_10 = v[$1 > 10];
 
     // Q6 (10 pts) - selection of Vector elements by means of a mask
-//    auto v_selected = v[mask_gt_10];
-//    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);
+    auto v_selected = v[mask_gt_10];
+    print("v", v, "Mask of $1>10", mask_gt_10, "v_selected", v_selected);
 
     // Q7 (10 pts) - accessing elements of a Vector in standard way and in reverse direction
     print("First element of v", v[0], "Last Element of v", v[-1]);
