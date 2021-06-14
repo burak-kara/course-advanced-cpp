@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 
-
 template<typename ...>
 struct TD; // your compile time debug helper (TypeDisplayer)
 
@@ -12,17 +11,11 @@ template<typename T>
 concept is_numeric = std::is_integral_v<std::remove_reference_t<T>> ||
                      std::is_floating_point_v<std::remove_reference_t<T>>;
 
-auto $1 = [](auto &first, auto ...rest) {
-    return first;
-};
-auto $2 = [](auto first, auto ...rest) {
-    return $1(rest...);
-};
-auto $3 = [](auto first, auto ...rest) {
-    return $2(rest...);
-};
+auto $1 = [](auto &first, auto ...rest) { return first;};
+auto $2 = [](auto first, auto ...rest)  { return $1(rest...); };
+auto $3 = [](auto first, auto ...rest)  { return $2(rest...); };
 
-// definitely the best solution... lots of code repetition......
+// definitely not the best solution... lots of code repetition......
 auto operator+(auto arg1, auto arg2) {
     if constexpr(is_numeric<decltype(arg1)>) {
         if constexpr(is_numeric<decltype(arg2)>) {
@@ -147,20 +140,16 @@ auto operator++(auto arg1) {
 }
 
 // week12 app2
-template<bool, typename T>
-struct enableIf {
-};
-template<typename T>
-struct enableIf<true, T> {
-    using type = T;
-};
+template<bool, typename T> struct enableIf {};
+template<typename T>       struct enableIf<true, T> { using type = T; };
 
 template<typename T>
 struct Vector : std::vector<T> {
     std::vector<T> vector;
 
+    // IDE (CLion) suggests explicit keyword
     template<typename ...Ts>
-    explicit Vector(Ts... ts) {
+    Vector(Ts... ts) {
         vector = {ts...};
     }
 
@@ -169,7 +158,7 @@ struct Vector : std::vector<T> {
         return vector[index >= 0 ? index : vector.size() + index];
     }
 
-    // bool expressions
+    // expressions
     auto operator[](const auto &&lambda) {
         using vec_type = decltype(lambda(vector[0]));
         auto vec = std::vector<vec_type>{};
@@ -180,6 +169,7 @@ struct Vector : std::vector<T> {
         return vec;
     }
 
+    // filter operations
     Vector<T> operator[](const std::vector<bool> &filter) {
         auto temp_vec = Vector{};
         for (size_t i = 0; i < filter.size(); ++i) {
@@ -196,19 +186,10 @@ struct Vector : std::vector<T> {
 template<typename First, typename ... Rest>
 Vector(First &&first, Rest &&... rest) -> Vector<std::remove_reference_t<First>>;
 
-template<typename T>
-struct is_vector : std::false_type {
-};
-template<typename T>
-struct is_vector<Vector<T>> : std::true_type {
-};
-
-template<typename T>
-struct is_std_vector : std::false_type {
-};
-template<typename T>
-struct is_std_vector<std::vector<T>> : std::true_type {
-};
+template<typename T> struct is_vector : std::false_type {};
+template<typename T> struct is_vector<Vector<T>> : std::true_type {};
+template<typename T> struct is_std_vector : std::false_type {};
+template<typename T> struct is_std_vector<std::vector<T>> : std::true_type {};
 
 void std_vector_printer(const auto &vector) {
     for (auto item:vector) {
