@@ -211,17 +211,15 @@ struct is_std_vector<std::vector<T>> : std::true_type {
 };
 
 void std_vector_printer(const auto &vector) {
-    for (auto i = 0; i < vector.size(); i++) {
-        std::cout << vector[i] << " ";
+    for (auto item:vector) {
+        std::cout << item << " ";
     }
-    std::cout << std::endl;
 }
 
 void vector_printer(auto &vector) {
     for (auto i = 0; i < vector.getSize(); i++) {
         std::cout << vector[i] << " ";
     }
-    std::cout << std::endl;
 }
 
 template<typename ...>
@@ -229,24 +227,29 @@ void print();
 
 template<typename T>
 void print(T &&t) {
+    std::cout << std::endl;
     if constexpr(is_vector<std::remove_reference_t<T>>::value) {
         vector_printer(t);
     } else if constexpr(is_std_vector<std::remove_reference_t<T>>::value) {
         std_vector_printer(t);
     } else {
-        std::cout << t << std::endl;
+        std::cout << t;
     }
+    std::cout << std::endl;
 }
 
 template<typename First, typename ...Rest>
 void print(First &&first, Rest &&...rest) {
+    std::cout << std::endl;
     if constexpr(is_vector<std::remove_reference_t<First>>::value) {
         vector_printer(first);
     } else if constexpr(is_std_vector<std::remove_reference_t<First>>::value) {
         std_vector_printer(first);
     } else {
-        std::cout << first << std::endl;
+        std::cout << first;
     }
+    if (sizeof...(rest) % 2 == 0)
+        std::cout << std::endl;
     print(rest...);
 }
 
