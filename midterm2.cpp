@@ -170,22 +170,15 @@ struct Vector : std::vector<T> {
     }
 
     // bool expressions
-    std::vector<bool> operator[](const auto &&lambda) {
-        auto vec = std::vector<bool>{};
+    auto operator[](const auto &&lambda) {
+        using vec_type = decltype(lambda(vector[0]));
+        auto vec = std::vector<vec_type>{};
         for (auto &v :vector) {
             auto a = lambda(v);
-//            auto td = TD<decltype(a)>{};
             vec.push_back(a);
         }
         return vec;
     }
-
-    // for other expressions
-//    auto operator[](const auto &&lambda) {
-//        for (auto &v :vector)
-//            lambda(v);
-//        return vector;
-//    }
 
     Vector<T> operator[](const std::vector<bool> &filter) {
         auto temp_vec = Vector{};
